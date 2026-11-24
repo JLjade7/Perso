@@ -4,7 +4,6 @@ import { esc, money, today, fmtDate, fmtDateTime, cap, num } from '../utils.js';
 import { loadTirelire, totalOf, pigSVG } from './tirelire.js';
 import { loadVoiture, monthKey, thisMonth } from './voiture.js';
 import { loadNotes } from './notes.js';
-import { loadCal, itemsFor } from './calendrier.js';
 import { loadWish } from './wishlist.js';
 
 export default {
@@ -26,9 +25,6 @@ export default {
 
     const notes = loadNotes().notes.sort((a, b) => b.updated - a.updated).slice(0, 3);
 
-    const cal = loadCal();
-    const todayItems = itemsFor(cal, today());
-    const lateCount = cal.reminders.filter((r) => !r.done && r.due && r.due < today()).length;
 
     const w = loadWish();
     const todo = w.items.filter((i) => !i.bought);
@@ -51,11 +47,6 @@ export default {
           <div class="progress"><div style="width:${p * 100}%"></div></div>
         </a>
 
-        <a class="card tile" href="#calendrier">
-          <div class="tile-head">📅 Aujourd’hui</div>
-          ${todayItems.length ? `<ul class="mini">${todayItems.slice(0, 5).map((i) => `<li>${i.kind === 'rappel' ? (i.done ? '☑️' : '🔔') : i.kind === 'ics' ? '🍎' : '📌'} ${i.time ? `<b>${i.time}</b> ` : ''}${esc(i.title)}</li>`).join('')}</ul>` : '<p class="muted">Rien de prévu aujourd’hui.</p>'}
-          ${lateCount ? `<p class="late small">${lateCount} rappel(s) en retard</p>` : ''}
-        </a>
 
         <a class="card tile" href="#voiture">
           <div class="tile-head">🚗 Voiture</div>
@@ -69,7 +60,7 @@ export default {
           <div class="muted">${todo.length} article(s) à acheter</div>
         </a>
 
-        <a class="card tile tile-wide" href="#notes">
+        <a class="card tile" href="#notes">
           <div class="tile-head">📝 Dernières notes</div>
           ${notes.length ? `<ul class="mini">${notes.map((n) => `<li>${n.mood || '📄'} ${esc(n.title) || 'Sans titre'} <span class="muted small">· ${fmtDateTime(n.updated)}</span></li>`).join('')}</ul>` : '<p class="muted">Aucune note pour l’instant.</p>'}
         </a>

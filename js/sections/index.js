@@ -12,8 +12,7 @@ import accueil from './accueil.js';
 import tirelire from './tirelire.js';
 import voiture from './voiture.js';
 import notes from './notes.js';
-import calendrier from './calendrier.js';
 import wishlist from './wishlist.js';
 import reglages from './reglages.js';
 
-export const sections = [accueil, tirelire, voiture, notes, calendrier, wishlist, reglages];
+export const sections = [accueil, tirelire, voiture, notes, wishlist, reglages];

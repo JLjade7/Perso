@@ -24,6 +24,7 @@
   --tag-red-bg: #ffe2dd;    --tag-red: #5d1715;
   --tag-yellow-bg: #fdecc8; --tag-yellow: #402c1b;
   --tag-gray-bg: #e3e2e0;   --tag-gray: #32302c;
+  --tag-green-bg: #dbeddb;  --tag-green: #1c3829;
 
   --c-event: #d3e5ef;  --c-event-t: #183347;
   --c-rappel: #fdecc8; --c-rappel-t: #402c1b;
@@ -56,6 +57,7 @@
     --tag-red-bg: #522e2a;    --tag-red: #ffd9d4;
     --tag-yellow-bg: #564328; --tag-yellow: #fdecc8;
     --tag-gray-bg: #3c3c3c;   --tag-gray: #e3e2e0;
+    --tag-green-bg: #2b4632;  --tag-green: #dbeddb;
 
     --c-event: #28456c;  --c-event-t: #d3e5ef;
     --c-rappel: #564328; --c-rappel-t: #fdecc8;
@@ -423,3 +425,78 @@ input.cell.small { font-size: 13px; color: var(--muted); }
 
   .home-grid { grid-template-columns: 1fr; gap: 12px; }
 }
+
+/* ===== Wish list : ajout par lien, chargement, galerie ===== */
+.quickadd { display: flex; flex-direction: column; gap: 8px; }
+.quickadd-label { font-weight: 600; }
+.quickadd .hint { margin: 0; }
+.spin { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin, .pig-wave { animation: none; } }
+.wimgedit { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; padding: 4px 0; }
+.wimgedit .btn.small { margin: 0; }
+
+.wtable.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.wtable.gallery .whead { display: none; }
+.wtable.gallery .empty { grid-column: 1 / -1; }
+.wtable.gallery .wrow {
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "img img img" "name name name" "price price pri" "check . del";
+  row-gap: 6px; column-gap: 6px; padding: 0 0 8px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; align-items: center; background: var(--card);
+}
+.wtable.gallery .wrow:hover { background: var(--card); box-shadow: 0 4px 14px rgba(15, 15, 15, 0.08); }
+.wtable.gallery .wimg {
+  grid-area: img; width: 100%; height: auto; aspect-ratio: 1 / 1; border: 0; border-bottom: 1px solid var(--border);
+  border-radius: 0; background: #ffffff; font-size: 54px; max-width: 100%;
+}
+.wtable.gallery .wimg img { object-fit: contain; padding: 10px; }
+.wtable.gallery .wname { grid-area: name; padding: 0 8px; }
+.wtable.gallery .has-url .wlink input[data-f=url] { display: none; }
+.wtable.gallery .wlink .open { max-width: 100%; }
+.wtable.gallery .wprice { grid-area: price; padding-left: 8px; justify-self: start; }
+.wtable.gallery .wprice input { text-align: left; width: 96px; font-size: 17px; }
+.wtable.gallery .wpri { grid-area: pri; padding-right: 8px; justify-self: end; }
+.wtable.gallery .wcheck { grid-area: check; padding: 0 0 0 12px; align-self: center; }
+.wtable.gallery .wcheck::after { content: 'Acheté'; font-size: 13px; color: var(--muted); margin-left: 6px; }
+.wtable.gallery .wcheck { display: flex; align-items: center; justify-content: flex-start; }
+.wtable.gallery .wdel { grid-area: del; margin-right: 6px; }
+@media (max-width: 760px) {
+  .wtable.gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .wtable.gallery .wprice input { width: 72px; font-size: 15px; }
+  .wtable.gallery .wcheck { padding: 0 0 0 10px; }
+  .wtable.gallery .tag { padding: 2px 6px !important; font-size: 12px; }
+  .wcard .card-head { flex-direction: column; align-items: stretch; }
+  .wcard .card-head .row { flex-wrap: wrap; }
+}
+
+/* ===== Voiture : pleins & récap ===== */
+.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; padding: 2px 9px; border-radius: 99px; background: var(--hover); color: var(--text); white-space: nowrap; }
+.pill.ok { background: var(--tag-green-bg); color: var(--tag-green); }
+.pill.now { background: var(--tag-yellow-bg); color: var(--tag-yellow); }
+.pill.up { background: var(--tag-red-bg); color: var(--tag-red); }
+.pill.down { background: var(--tag-green-bg); color: var(--tag-green); }
+.fill-tenue { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.list-item.fill { align-items: flex-start; }
+.list-item.fill .li-icon { padding-top: 2px; }
+.stat-hero { background: var(--tag-yellow-bg); border-color: transparent; }
+.stat-hero .stat-label, .stat-hero .stat-sub { color: var(--tag-yellow); opacity: .8; }
+.stat-hero .stat-value { color: var(--tag-yellow); }
+.recap-title { margin: 0; min-width: 0; font-size: 18px; text-align: center; }
+.recap-total { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin: 4px 0 14px; }
+.recap-stats { margin-bottom: 18px; }
+.recap-stats .stat { background: transparent; }
+.recap-bars { margin-bottom: 18px; }
+.recap-bars .bars { height: 170px; gap: 4px; }
+.recap-list summary { cursor: pointer; font-weight: 600; padding: 6px 0; color: var(--muted); }
+@media (max-width: 760px) {
+  .recap .card-head { flex-direction: column; align-items: stretch; }
+  .recap .cal-nav { justify-content: space-between; }
+  .recap-bars .bar-val { display: none; }
+  .recap-bars .bar-label { font-size: 10px; }
+}
+/* Galerie : prix sur sa ligne, puis acheté / priorité / supprimer */
+.wtable.gallery .wrow { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "img img img" "name name name" "price price price" "check pri del"; }
+.wtable.gallery .wrow > * { min-width: 0; }
+.wtable.gallery .wpri { justify-self: start; padding: 0; }
+.wtable.gallery .wcheck::after { content: none; }
+.wtable.gallery .wcheck { padding-right: 4px; }
