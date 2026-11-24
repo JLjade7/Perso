@@ -12,7 +12,7 @@ function currentId() {
 }
 
 function renderNav(active) {
-  const item = (s) => `<a href="#/${s.id}" class="nav-item${s.id === active ? ' active' : ''}"${s.id === active ? ' aria-current="page"' : ''}>
+  const item = (s) => `<a href="#${s.id}" class="nav-item${s.id === active ? ' active' : ''}"${s.id === active ? ' aria-current="page"' : ''}>
       <span class="nav-icon" aria-hidden="true">${s.icon}</span><span class="nav-label">${esc(s.title)}</span></a>`;
   sidebar.innerHTML = `
     <div class="brand"><span class="brand-icon" aria-hidden="true">✨</span> Mon espace</div>

@@ -38,38 +38,38 @@ export default {
       <header class="page-head home-head">
         <div class="page-title-row">
           <h1>${hello}${settings.name ? ' ' + esc(settings.name) : ''} 👋</h1>
-          <a class="icon-btn gear" href="#/reglages" aria-label="Réglages">⚙️</a>
+          <a class="icon-btn gear" href="#reglages" aria-label="Réglages">⚙️</a>
         </div>
         <p class="muted">${cap(fmtDate(today(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</p>
       </header>
 
       <div class="home-grid">
-        <a class="card tile" href="#/tirelire">
+        <a class="card tile" href="#tirelire">
           <div class="tile-head">🐷 Tirelire</div>
           <div class="tile-pig">${pigSVG(p, { small: true })}
             <div><div class="big-number">${money(total)}</div><div class="muted">${Math.round(p * 100)} % de « ${esc(t.goalName)} »</div></div></div>
           <div class="progress"><div style="width:${p * 100}%"></div></div>
         </a>
 
-        <a class="card tile" href="#/calendrier">
+        <a class="card tile" href="#calendrier">
           <div class="tile-head">📅 Aujourd’hui</div>
           ${todayItems.length ? `<ul class="mini">${todayItems.slice(0, 5).map((i) => `<li>${i.kind === 'rappel' ? (i.done ? '☑️' : '🔔') : i.kind === 'ics' ? '🍎' : '📌'} ${i.time ? `<b>${i.time}</b> ` : ''}${esc(i.title)}</li>`).join('')}</ul>` : '<p class="muted">Rien de prévu aujourd’hui.</p>'}
           ${lateCount ? `<p class="late small">${lateCount} rappel(s) en retard</p>` : ''}
         </a>
 
-        <a class="card tile" href="#/voiture">
+        <a class="card tile" href="#voiture">
           <div class="tile-head">🚗 Voiture</div>
           <div class="big-number">${money(carMonth)}</div>
           <div class="muted">dépensés ce mois-ci${lastKm ? ` · compteur ${num(lastKm)} km` : ''}</div>
         </a>
 
-        <a class="card tile" href="#/wishlist">
+        <a class="card tile" href="#wishlist">
           <div class="tile-head">🛍️ Wish list</div>
           <div class="big-number">${money(todoTotal)}</div>
           <div class="muted">${todo.length} article(s) à acheter</div>
         </a>
 
-        <a class="card tile tile-wide" href="#/notes">
+        <a class="card tile tile-wide" href="#notes">
           <div class="tile-head">📝 Dernières notes</div>
           ${notes.length ? `<ul class="mini">${notes.map((n) => `<li>${n.mood || '📄'} ${esc(n.title) || 'Sans titre'} <span class="muted small">· ${fmtDateTime(n.updated)}</span></li>`).join('')}</ul>` : '<p class="muted">Aucune note pour l’instant.</p>'}
         </a>
