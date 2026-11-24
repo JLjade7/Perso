@@ -1,6 +1,6 @@
 # Mon espace ✨
 
-Mon site perso d'organisation : **Tirelire 🐷**, **Voiture 🚗**, **Notes 📝**, **Calendrier 📅** et **Wish list 🛍️**.
+Mon site perso d'organisation : **Tirelire 🐷**, **Voiture 🚗**, **Notes 📝** et **Wish list 🛍️**.
 
 - Site statique (HTML, CSS, JavaScript), sans serveur ni compte : hébergé gratuitement avec GitHub Pages.
 - Les données sont enregistrées dans le navigateur de chaque appareil (localStorage).

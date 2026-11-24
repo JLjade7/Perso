@@ -31,6 +31,7 @@ export default {
     const todoTotal = todo.reduce((a, i) => a + (i.price || 0), 0);
 
     root.innerHTML = `
+      <div class="cover"><img src="img/accueil.jpg" alt="" decoding="async"></div>
       <header class="page-head home-head">
         <div class="page-title-row">
           <h1>${hello}${settings.name ? ' ' + esc(settings.name) : ''} 👋</h1>
