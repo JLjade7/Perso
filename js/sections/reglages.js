@@ -1,5 +1,5 @@
 // ⚙️ Réglages : prénom, sauvegarde et restauration des données.
-import { load, save, exportAll, importAll, clearAll } from '../store.js';
+import { load, save, exportAll, importAll, clearAll, exportCode, importCode } from '../store.js';
 import { esc, toast, confirmClick, pageHead, today } from '../utils.js';
 
 export default {
@@ -15,6 +15,21 @@ export default {
       <section class="card">
         <h2>Moi</h2>
         <label class="field"><span>Mon prénom (affiché sur l’accueil)</span><input id="rname" value="${esc(s.name)}" placeholder="Ton prénom"></label>
+      </section>
+
+      <section class="card">
+        <h2>🔄 Transférer mes données</h2>
+        <p>Pour retrouver tes données ailleurs (aperçu Claude → vrai site, ordinateur → téléphone…) :</p>
+        <ol class="steps">
+          <li>Là où sont tes données, touche <b>Copier mes données</b>.</li>
+          <li>Sur l’autre site ou appareil, ouvre <b>Réglages</b>, colle dans la case et touche <b>Importer</b>.</li>
+        </ol>
+        <div class="row wrap">
+          <button class="btn primary" id="rcopy">📋 Copier mes données</button>
+        </div>
+        <textarea id="rcode" class="code-box" rows="3" placeholder="Colle ici le code copié (il commence par MONESPACE:)"></textarea>
+        <div class="row wrap"><button class="btn" id="rpaste">⬆️ Importer</button></div>
+        <p class="hint">L’import ajoute les données à celles déjà présentes, rien n’est effacé.</p>
       </section>
 
       <section class="card">
@@ -34,6 +49,22 @@ export default {
         <p>Pour l’avoir comme une app : ouvre le site dans Safari, touche <b>Partager</b> puis <b>Sur l’écran d’accueil</b>.</p>
       </section>`;
 
+    const codeBox = root.querySelector('#rcode');
+    root.querySelector('#rcopy').addEventListener('click', () => {
+      const code = exportCode();
+      codeBox.value = code;
+      const fallback = () => { codeBox.focus(); codeBox.select(); toast('Le code est sélectionné : fais Copier (Ctrl + C)'); };
+      try {
+        navigator.clipboard.writeText(code).then(() => toast('Données copiées ✔ Colle-les dans Réglages sur l’autre site'), fallback);
+      } catch (e) { fallback(); }
+    });
+    root.querySelector('#rpaste').addEventListener('click', () => {
+      try {
+        importCode(codeBox.value);
+        toast('Données importées ✔');
+        setTimeout(() => { location.hash = '#accueil'; location.reload(); }, 700);
+      } catch (e) { toast('Ce code n’est pas valide. Recopie-le en entier.'); }
+    });
     root.querySelector('#rname').addEventListener('input', (e) => { s.name = e.target.value.trim(); save('reglages', s); });
     root.querySelector('#rexp').addEventListener('click', () => {
       const blob = new Blob([JSON.stringify(exportAll(), null, 2)], { type: 'application/json' });

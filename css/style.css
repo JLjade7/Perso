@@ -530,3 +530,4 @@ select.wgroup-sel {
   .gchips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
   .gchip { flex-shrink: 0; }
 }
+textarea.code-box { margin: 12px 0 8px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; resize: vertical; word-break: break-all; }
