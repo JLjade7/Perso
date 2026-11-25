@@ -531,3 +531,14 @@ select.wgroup-sel {
   .gchip { flex-shrink: 0; }
 }
 textarea.code-box { margin: 12px 0 8px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; resize: vertical; word-break: break-all; }
+
+/* ===== Synchro & connexion ===== */
+.sync-badge { display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 12.5px; color: var(--muted); text-decoration: none; border-radius: 6px; }
+.sync-badge:hover { background: var(--hover); }
+.sync-error, .sync-offline { color: var(--neg); }
+body.is-login .bottomnav, body.is-login .sidebar { display: none; }
+.page.login { display: flex; justify-content: center; align-items: flex-start; padding-top: 10vh; }
+.login-card { width: 100%; max-width: 400px; }
+.login-card h1 { margin-bottom: 4px; }
+.login-card .form { margin-top: 18px; }
+.login-card .error:empty { display: none; }

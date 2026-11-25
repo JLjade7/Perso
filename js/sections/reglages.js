@@ -1,6 +1,7 @@
 // ⚙️ Réglages : prénom, sauvegarde et restauration des données.
 import { load, save, exportAll, importAll, clearAll, exportCode, importCode } from '../store.js';
 import { esc, toast, confirmClick, pageHead, today } from '../utils.js';
+import * as cloud from '../cloud.js';
 
 export default {
   id: 'reglages',
@@ -16,6 +17,13 @@ export default {
         <h2>Moi</h2>
         <label class="field"><span>Mon prénom (affiché sur l’accueil)</span><input id="rname" value="${esc(s.name)}" placeholder="Ton prénom"></label>
       </section>
+
+      ${cloud.currentUser() ? `<section class="card">
+        <h2>☁️ Synchronisation</h2>
+        <p>Connectée avec <b>${esc(cloud.currentUser().email)}</b>. Tout ce que tu ajoutes est enregistré en ligne et apparaît automatiquement sur tes autres appareils.</p>
+        <p class="hint">Sur un nouvel appareil, ouvre le site et connecte-toi avec le même e-mail et mot de passe.</p>
+        <div class="row wrap"><button class="btn" id="rlogout">Se déconnecter de cet appareil</button></div>
+      </section>` : ''}
 
       <section class="card">
         <h2>🔄 Transférer mes données</h2>
@@ -34,13 +42,12 @@ export default {
 
       <section class="card">
         <h2>Mes données</h2>
-        <p>Tes données sont enregistrées <b>dans ce navigateur, sur cet appareil</b>. Elles ne partent sur aucun serveur.
-        Si tu utilises le site sur ton téléphone et ton ordinateur, chacun a ses propres données.</p>
+        <p>${cloud.currentUser() ? 'Tes données sont enregistrées en ligne dans ton espace Firebase, et gardées aussi sur cet appareil pour s’ouvrir vite.' : 'Tes données sont enregistrées <b>dans ce navigateur, sur cet appareil</b>. Si tu utilises le site sur ton téléphone et ton ordinateur, chacun a ses propres données.'}</p>
         <p class="hint">Pour garder une copie ou passer d’un appareil à l’autre : télécharge une sauvegarde ici, puis importe-la sur l’autre appareil.</p>
         <div class="row wrap">
           <button class="btn primary" id="rexp">⬇️ Télécharger une sauvegarde</button>
           <label class="btn">⬆️ Importer une sauvegarde<input type="file" id="rimp" accept=".json,application/json" hidden></label>
-          <button class="btn ghost danger-text" id="rclear">Tout effacer</button>
+          ${cloud.currentUser() ? '' : '<button class="btn ghost danger-text" id="rclear">Tout effacer</button>'}
         </div>
       </section>
 
@@ -86,8 +93,9 @@ export default {
         setTimeout(() => location.reload(), 600);
       } catch { toast('Ce fichier n’est pas une sauvegarde valide'); }
     });
+    root.querySelector('#rlogout')?.addEventListener('click', async () => { await cloud.signOut(); });
     const clr = root.querySelector('#rclear');
-    clr.addEventListener('click', () => confirmClick(clr, () => {
+    clr?.addEventListener('click', () => confirmClick(clr, () => {
       clearAll(); toast('Toutes les données ont été effacées'); setTimeout(() => location.reload(), 600);
     }));
   },

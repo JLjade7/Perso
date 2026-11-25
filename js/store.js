@@ -13,9 +13,40 @@ export function load(name, defaults) {
   return base;
 }
 
+// Quand la synchro en ligne est active, cloud.js branche ici sa fonction d'envoi.
+let onSave = null;
+export function setSaveHook(fn) { onSave = fn; }
+
+// Date de dernière modification de chaque rubrique (pour savoir quelle version est la plus récente)
+export function getMeta() {
+  try { return JSON.parse(localStorage.getItem(PREFIX + '_meta')) || {}; } catch (e) { return {}; }
+}
+export function setMeta(name, t) {
+  const m = getMeta(); m[name] = t;
+  try { localStorage.setItem(PREFIX + '_meta', JSON.stringify(m)); } catch (e) { /* ignore */ }
+}
+export function readRaw(name) {
+  try { return localStorage.getItem(PREFIX + name); } catch (e) { return null; }
+}
+export function writeRaw(name, raw) {
+  try { localStorage.setItem(PREFIX + name, raw); } catch (e) { /* ignore */ }
+}
+export function localKeys() {
+  const out = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(PREFIX) && !k.startsWith(PREFIX + '_')) out.push(k.slice(PREFIX.length));
+    }
+  } catch (e) { /* ignore */ }
+  return out;
+}
+
 export function save(name, value) {
   try {
     localStorage.setItem(PREFIX + name, JSON.stringify(value));
+    setMeta(name, Date.now());
+    if (onSave) onSave(name);
     return true;
   } catch (e) {
     toast("Impossible d'enregistrer (stockage plein ou bloqué)");
@@ -28,7 +59,7 @@ export function exportAll() {
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith(PREFIX)) out[k.slice(PREFIX.length)] = JSON.parse(localStorage.getItem(k));
+      if (k && k.startsWith(PREFIX) && !k.startsWith(PREFIX + '_')) out[k.slice(PREFIX.length)] = JSON.parse(localStorage.getItem(k));
     }
   } catch (e) { /* ignore */ }
   return out;
@@ -53,6 +84,8 @@ export function importAll(obj) {
       }
     }
     localStorage.setItem(PREFIX + k, JSON.stringify(out));
+    setMeta(k, Date.now());
+    if (onSave) onSave(k);
   }
 }
 
