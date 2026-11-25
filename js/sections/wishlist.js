@@ -46,10 +46,11 @@ export default {
   render(root) {
     const s = loadWish();
 
-    // Groupe affiché : '' = tout, '_none' = sans groupe, sinon l'id du groupe
-    const inGroup = (i) => !s.group ? true : s.group === '_none' ? !i.group : i.group === s.group;
+    // Groupe affiché : '' = ma liste (articles sans groupe), sinon l'id du groupe.
+    // Un article rangé dans un groupe n'apparaît que dans ce groupe.
+    const inGroup = (i) => !s.group ? !i.group : i.group === s.group;
     const currentGroup = () => s.groups.find((g) => g.id === s.group);
-    if (s.group && s.group !== '_none' && !currentGroup()) s.group = '';
+    if (s.group && !currentGroup()) s.group = '';
 
     const draw = (focusId) => {
       const scope = s.items.filter(inGroup);
@@ -68,7 +69,7 @@ export default {
       const groupTotal = (id) => s.items.filter((i) => (id === '_none' ? !i.group : i.group === id) && !i.bought).reduce((a, i) => a + (i.price || 0), 0);
       const groupCount = (id) => s.items.filter((i) => id === '_none' ? !i.group : i.group === id).length;
       const groupSelect = (i) => s.groups.length ? `<select class="wgroup-sel" data-f="group" aria-label="Groupe">
-              <option value="">📁 Aucun groupe</option>
+              <option value="">📁 Ma liste</option>
               ${s.groups.map((gr) => `<option value="${gr.id}"${gr.id === i.group ? ' selected' : ''}>📁 ${esc(gr.name)}</option>`).join('')}
             </select>` : '';
       const totalBought = totalAll - totalTodo;
@@ -122,9 +123,8 @@ export default {
         <section class="card wgroups">
           <h2>Mes groupes</h2>
           <div class="gchips" role="tablist" aria-label="Groupes">
-            <button class="gchip${!s.group ? ' on' : ''}" data-group="">✨ Tout <span>${s.items.length}</span></button>
+            <button class="gchip${!s.group ? ' on' : ''}" data-group="">🛍️ Ma liste <span>${groupCount('_none')} · ${money(groupTotal('_none'))}</span></button>
             ${s.groups.map((gr) => `<button class="gchip${s.group === gr.id ? ' on' : ''}" data-group="${gr.id}">📁 ${esc(gr.name)} <span>${groupCount(gr.id)} · ${money(groupTotal(gr.id))}</span></button>`).join('')}
-            ${s.groups.length && groupCount('_none') ? `<button class="gchip${s.group === '_none' ? ' on' : ''}" data-group="_none">Sans groupe <span>${groupCount('_none')}</span></button>` : ''}
             ${newGroupOpen ? '' : '<button class="gchip gadd" id="gnew">＋ Nouveau groupe</button>'}
           </div>
           ${newGroupOpen ? `<form id="gform" class="row gform" autocomplete="off">
@@ -132,12 +132,12 @@ export default {
             <button class="btn primary">Créer</button>
             <button type="button" class="btn ghost" id="gcancel">Annuler</button>
           </form>` : ''}
-          ${!s.groups.length && !newGroupOpen ? '<p class="hint">Crée des groupes pour ranger tes articles, par exemple « Cadeau maman » ou « Noël ». Chaque groupe affiche son total.</p>' : ''}
+          ${!s.groups.length && !newGroupOpen ? '<p class="hint">Crée des groupes pour ranger tes articles à part, par exemple « Cadeau maman » ou « Noël ». Un article rangé dans un groupe n’apparaît que dans ce groupe.</p>' : ''}
           ${g ? `<div class="gedit">
             <label class="field grow"><span>Nom du groupe</span><input id="grename" value="${esc(g.name)}" maxlength="40"></label>
             <button class="btn ghost danger-text" id="gdel">Supprimer le groupe</button>
           </div>
-          <p class="hint">Les articles ajoutés maintenant vont directement dans « ${esc(g.name)} ». Supprimer le groupe garde ses articles dans la liste.</p>` : ''}
+          <p class="hint">Les articles ajoutés maintenant vont directement dans « ${esc(g.name)} ». Supprimer le groupe remet ses articles dans « Ma liste ».</p>` : ''}
         </section>
 
         <section class="card wcard">
@@ -161,7 +161,7 @@ export default {
           </div>
           <div class="wtable${s.view !== 'table' ? ' gallery' : ''}">
             <div class="whead"><span>✓</span><span></span><span>Article</span><span>Prix</span><span>Priorité</span><span></span></div>
-            ${items.map(row).join('') || `<p class="empty">${s.items.length ? (g && !scope.length ? 'Ce groupe est vide. Ajoute un article avec son lien, ou choisis « 📁 ' + esc(g.name) + ' » sur un article existant.' : 'Rien dans ce filtre.') : 'Ta wish list est vide. Clique sur « Nouveau » pour ajouter ton premier article ✨'}</p>`}
+            ${items.map(row).join('') || `<p class="empty">${s.items.length ? (!g && !scope.length ? 'Tous tes articles sont rangés dans tes groupes 👆' : g && !scope.length ? 'Ce groupe est vide. Ajoute un article avec son lien, ou choisis « 📁 ' + esc(g.name) + ' » sur un article existant.' : 'Rien dans ce filtre.') : 'Ta wish list est vide. Clique sur « Nouveau » pour ajouter ton premier article ✨'}</p>`}
           </div>
           <button class="wnew" id="wadd2">＋ Nouvel article</button>
         </section>`;
@@ -246,7 +246,7 @@ export default {
             if (f === 'bought') { it.bought = inp.checked; if (inp.checked) toast('Acheté 🎉'); }
             else if (f === 'price') { const v = parseNum(inp.value); it.price = v > 0 ? Math.round(v * 100) / 100 : 0; }
             else if (f === 'priority') it.priority = inp.value;
-            else if (f === 'group') { it.group = inp.value; const gr = s.groups.find((x) => x.id === it.group); toast(gr ? `Rangé dans « ${gr.name} »` : 'Retiré du groupe'); }
+            else if (f === 'group') { it.group = inp.value; const gr = s.groups.find((x) => x.id === it.group); toast(gr ? `Déplacé dans « ${gr.name} »` : 'Remis dans « Ma liste »'); }
             else it[f] = inp.value.trim();
             if (f === 'image') { openImg = null; it.imageAuto = !it.image; }
             save('wishlist', s);
